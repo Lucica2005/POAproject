@@ -1,0 +1,78 @@
+\begin{mdframed}[backgroundcolor=darkgray, linecolor=lightgray, linewidth=1pt, innermargin=0.5cm, outermargin=0.5cm, skipbelow=0.1cm]
+    \color{white}
+    \begin{verbatim}
+    class Predictor:
+    def __init__(self, model_path='saved/best_model.pt', args_path='saved/args.pkl', vocab_path='saved/text_field_vocab.pkl', device=None):
+        print('Loading model...')
+        self.device = device
+        with open(args_path, 'rb') as f:
+            self.args = pickle.load(f)
+        if(self.device):
+            self.args.device = self.device
+        with open(vocab_path, 'rb') as f:
+            text_field_vocab = pickle.load(f)
+        self.text_field = data.Field(lower=True, tokenize=dataset.word_cut)
+        self.text_field.vocab = text_field_vocab
+        if self.args.static:
+            self.args.embedding_dim = self.text_field.vocab.vectors.size()[-1]
+            self.args.vectors = self.text_field.vocab.vectors
+        self.model = MD.TextCNN(self.args)
+        self.model.load_state_dict(torch.load(model_path))
+        if self.args.cuda:
+            torch.cuda.set_device(self.args.device)
+            self.model = self.model.cuda()
+        print('Model loaded')
+  \end{verbatim}  
+  \end{mdframed}
+
+  \begin{figure}[htbp]
+    \centering
+    
+    \begin{subfigure}{0.45\textwidth}
+      \includegraphics[width=\linewidth]{pictures/33.png}
+      \caption{车评热点词汇云图}
+    \end{subfigure}
+     \hspace{0.3em}% 添加空白以分隔子图
+    \begin{subfigure}{0.5\textwidth}
+      \includegraphics[width=\linewidth]{pictures/37.png}
+      \caption{车评热点词汇饼图}
+    \end{subfigure}
+    
+    
+    \caption{车评热点词汇统计}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth,keepaspectratio=false]{pictures/32.png} % 修改为实际图片路径
+        \caption{车评热点词汇云图}
+      \end{figure}
+
+      \begin{mdframed}[backgroundcolor=lightgray!20, linecolor=darkgray, linewidth=1pt]
+  \begin{verbatim}
+  {
+      "id": "294028_0",
+      "car_name": "2023款 冠军版 DM-i 110KM 旗舰PLUS",
+      "comment": "🚗2023比亚迪宋DM-i，开启我的出行新篇章！🚗",
+      "split_id": 3
+  },
+  {
+      "id": "294028_1",
+      "car_name": "2023款 冠军版 DM-i 110KM 旗舰PLUS",
+      "comment": "Hey小伙伴们！今天我要给大家分享一下我的新宠，2023款比亚迪送DM-i。 不管是选车、买车、用车还是玩车，我都要毫不保留地和你们聊聊我的亲身感受，一切都是真实的哦！✨",
+      "split_id": 3
+  },
+  {
+      "id": "302141_0",
+      "car_name": "2021款 EV 旗舰型",
+      "comment": "【攒够买车的首付，买了宋PLUS，享受幸福时光😍😍",
+      "split_id": 2
+  },
+  {
+      "id": "301684_0",
+      "car_name": "2021款 DM-i 51KM 尊荣型",
+      "comment": "一直以来家人外出都需要乘坐公交车或者是打车，可是一旦道路高峰期，每一项都很困难。便想着购买一台汽车，然而我一直都喜欢宋PLUS，老婆也推荐了零跑C11，后来对比之后，我还是更爱宋PULS，便购买了这款车。",
+      "split_id": 3
+  }
+\end{verbatim}
+  \end{mdframed}
